@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link href="./stylesheets/index.css" rel="stylesheet" />
+    <title>复制文本</title>
+    <style>
+      .setting-container {
+        padding: 20px 0;
+        display: flex;
+      }
+      .setting-container .ipt {
+        width: 300px;
+        margin-right: 20px;
+      }
+      .icon {
+        min-width: 30px;
+        max-width: 30px;
+        display: block;
+        margin: 0 auto;
+      }
+      .clipboard {
+        position: fixed;
+        left: 99px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <!-- 顶部 -->
+      <div class="setting-container" ref="settingContainer">
+        <el-button type="primary" @click="setDialogStatus('settingDialog', true)">系统设置</el-button>
+        <el-button type="primary" @click="toPage('index')">toImgPage</el-button>
+      </div>
+      <!-- 表格 -->
+      <el-table :data="currTableData" :height="tableHeigth" border style="width: 100%">
+        <el-table-column align="center" prop="text" label="文本内容" width="160"> </el-table-column>
+
+        <el-table-column align="center" prop="fontSize" label="文本大小(px)"></el-table-column>
+
+        <el-table-column align="center" prop="color" label="文本颜色(hex)"></el-table-column>
+
+        <el-table-column align="center" prop="fontFamily" label="文本字体"></el-table-column>
+
+        <el-table-column align="center" label="操作">
+          <template slot-scope="scope">
+            <el-button
+              :data-clipboard-text="scope.row.code"
+              type="primary"
+              :class="[`copyBtn${scope.$index}`]"
+              @click="doClipboard(scope)"
+              >复制</el-button
+            >
+            <el-button icon="el-icon-search" @click="getCode(scope.row.code)">查看代码</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- 三个弹框 -->
+      <setting-dialog-component @set-system-params="setSystemParams" ref="settingDialog"></setting-dialog-component>
+      <clipboard-dialog-component :content="clipboardDialogContent" ref="clipboardDialog"></clipboard-dialog-component>
+    </div>
+  </body>
+  <script src="./klass/TextTbData.js"></script>
+  <script src="./klass/SystemSettingParams.js"></script>
+  <script src="./javaScript/axios.min.js"></script>
+  <script src="./javaScript/vue.min.js"></script>
+  <script src="./javaScript/element-ui.js"></script>
+  <script src="./javaScript/clipboard.min.js"></script>
+  <script src="./components/SettingDialog.js"></script>
+  <script src="./components/clipboardDialog.js"></script>
+  <script src="./mixins/commonMixin.js"></script>
+
+  <script>
+    const globalRuntimePlatform = {
+      vue: 'vue',
+      weapp: 'weapp'
+    }
+
+    let vm = new Vue({
+      el: '#app',
+      components: {
+        settingDialogComponent,
+        clipboardDialogComponent
+        // statisticalDialogComponent
+      },
+      data() {
+        return {
+          // 动态设置表格高度
+          tableHeigth: 0,
+          currTableData: [],
+          // 系统设置
+          systemParams: new SystemSettingParams(),
+          // 剪切板的代码
+          clipboardDialogContent: '',
+          // 点击生成代码的按钮元素
+          tapBtn: null,
+          statisticalDialogContent: []
+        }
+      },
+      mixins: [commonMixin],
+      created() {
+        if (window.localStorage.systemParams) {
+          this.systemParams = JSON.parse(window.localStorage.systemParams)
+        }
+        this.getData()
+      },
+      methods: {
+        // 获取数据
+        getData() {
+          axios
+            .get(`/getText`)
+            .then(res => {
+              res.data.shift()
+              for (let index = 0; index < res.data.length; index++) {
+                this.currTableData.push(new TextTbData(res.data[index]))
+              }
+              this.initCode()
+            })
+            .catch(err => {
+              this.$message.error(err.response.data)
+            })
+        },
+        initCode() {
+          let runtimePlatformParams = this.getRuntimePlatformParams(this.systemParams.runtimePlatform)
+          this.currTableData.map(v => {
+            v.code = this.makeHtml(runtimePlatformParams.htmlTag, runtimePlatformParams.unit, v)
+          })
+          this.loading.close()
+        },
+        doClipboard(scope) {
+          let className = `copyBtn${scope.$index}`
+          window[className] = new ClipboardJS(`.${className}`, {
+            text: trigger => {
+              return this.currTableData[scope.$index].code
+            }
+          })
+          this.$message({
+            message: '复制成功',
+            type: 'success'
+          })
+        },
+        setSystemParams(systemParams) {
+          // 简单粗暴，因为使用缓存，所以直接刷新就好，不需要重置数据了
+          window.localStorage.systemParams = JSON.stringify(systemParams)
+          window.location.reload()
+        },
+        getRuntimePlatformParams(runtimePlatform) {
+          let unit = ''
+          let htmlTag = ''
+          switch (runtimePlatform) {
+            case globalRuntimePlatform.vue:
+              unit = 'rem'
+              htmlTag = 'div'
+              break
+            case globalRuntimePlatform.weapp:
+              unit = 'rpx'
+              htmlTag = 'text'
+              break
+            default:
+              unit = 'rem'
+              htmlTag = 'div'
+          }
+          return {
+            unit,
+            htmlTag
+          }
+        },
+        makeHtml(htmlTag, unit, data) {
+          let { text, color, fontFamily, fontSize } = data
+
+          let vNode = {
+            tag: `<${htmlTag}`,
+            tagId: ``,
+            tagSrc: ``,
+            tagClass: `class="app-text-common"`,
+            tagStyle: `style="color: ${color};font-family: '${fontFamily}';font-size: ${this.fixStyle(fontSize)}${unit};display: inline-block;"`
+          }
+
+          if (!this.systemParams.hasId) {
+            delete vNode.tagId
+          }
+          if (!this.systemParams.hasCommonClass) {
+            delete vNode.tagClass
+          }
+
+          let htmlTpl = []
+          for (const key in vNode) {
+            if (vNode.hasOwnProperty(key) && !!vNode[key]) {
+              htmlTpl.push(vNode[key])
+            }
+          }
+
+          this.clipboardDialogContent = htmlTpl.join(' ')
+
+          if (this.systemParams.runtimePlatform === globalRuntimePlatform.vue) {
+            // vue(web)，web其实可以用闭合标签的，但是w3c规范是不添加，所以还是区分下
+            this.clipboardDialogContent = this.clipboardDialogContent + `>` + text + `</${htmlTag}>`
+          } else {
+            // weapp
+            this.clipboardDialogContent = this.clipboardDialogContent + `>` + text + `</${htmlTag}>`
+          }
+
+          return this.clipboardDialogContent
+        }
+      }
+    })
+  </script>
+</html>
