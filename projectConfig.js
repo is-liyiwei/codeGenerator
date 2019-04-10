@@ -1,6 +1,6 @@
 module.exports = {
   // 文件路径
-  filesPath: 'G:/vue/src/assets',
+  filesPath: 'G:/work-demo/lacrosse/src/assets',
   // 是否自动打开浏览器
   autoOpenBrowser: true,
   // ['localhost', 'autoIp']，不建议修改

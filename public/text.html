@@ -175,7 +175,7 @@
             tagId: ``,
             tagSrc: ``,
             tagClass: `class="app-text-common"`,
-            tagStyle: `style="color: ${color};font-family: '${fontFamily}';font-size: ${this.fixStyle(fontSize)}${unit};display: inline-block;"`
+            tagStyle: `style="color: ${color};font-family: '${fontFamily}';font-size: calc(1${unit} * ${fontSize} / ${this.systemParams.fixRem});display: inline-block;"`
           }
 
           if (!this.systemParams.hasId) {
