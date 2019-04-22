@@ -296,10 +296,10 @@
           
           let vNode = {
             tag: `<${htmlTag}`,
+            tagStyle: `style="width: ${this.fixStyle(imgW)}${unit};height: ${this.fixStyle(imgH)}${unit};"`,
             tagId: `id="${idName}"`,
             tagSrc: `src="${imgSrc}"`,
-            tagClass: `class="app-icon-common"`,
-            tagStyle: `style="width: ${this.fixStyle(imgW)}${unit};height: ${this.fixStyle(imgH)}${unit};"`
+            tagClass: `class="app-icon-common"`
           }
 
           if (!this.systemParams.hasId) {

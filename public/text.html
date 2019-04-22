@@ -172,10 +172,11 @@
 
           let vNode = {
             tag: `<${htmlTag}`,
+            tagStyle: `style="color: ${color};font-size: calc(1${unit} * ${fontSize} / ${this.systemParams.fixRem});"`,
+            // tagStyle: `style="color: ${color};font-family: '${fontFamily}';font-size: calc(1${unit} * ${fontSize} / ${this.systemParams.fixRem});display: inline-block;"`,
             tagId: ``,
             tagSrc: ``,
-            tagClass: `class="app-text-common"`,
-            tagStyle: `style="color: ${color};font-family: '${fontFamily}';font-size: calc(1${unit} * ${fontSize} / ${this.systemParams.fixRem});display: inline-block;"`
+            tagClass: `class="app-text-common"`
           }
 
           if (!this.systemParams.hasId) {
