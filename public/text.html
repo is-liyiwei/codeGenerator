@@ -32,7 +32,7 @@
       <!-- 顶部 -->
       <div class="setting-container" ref="settingContainer">
         <el-button type="primary" @click="setDialogStatus('settingDialog', true)">系统设置</el-button>
-        <el-button type="primary" @click="toPage('index')">toImgPage</el-button>
+        <el-button type="primary" @click="toPage('index')">图片代码生成页面</el-button>
       </div>
       <!-- 表格 -->
       <el-table :data="currTableData" :height="tableHeigth" border style="width: 100%">
@@ -152,7 +152,7 @@
           switch (runtimePlatform) {
             case globalRuntimePlatform.vue:
               unit = 'rem'
-              htmlTag = 'div'
+              htmlTag = 'span'
               break
             case globalRuntimePlatform.weapp:
               unit = 'rpx'
@@ -160,7 +160,7 @@
               break
             default:
               unit = 'rem'
-              htmlTag = 'div'
+              htmlTag = 'span'
           }
           return {
             unit,
@@ -170,13 +170,16 @@
         makeHtml(htmlTag, unit, data) {
           let { text, color, fontFamily, fontSize } = data
 
+          console.log(data)
+
           let vNode = {
             tag: `<${htmlTag}`,
-            tagStyle: `style="color: ${color};font-size: calc(1${unit} * ${fontSize} / ${this.systemParams.fixRem});"`,
+            // 不采用这个方式，直接添加css实现
+            // tagStyle: `style="color: ${color};font-size: calc(1${unit} * ${fontSize} / ${this.systemParams.fixRem});"`,
             // tagStyle: `style="color: ${color};font-family: '${fontFamily}';font-size: calc(1${unit} * ${fontSize} / ${this.systemParams.fixRem});display: inline-block;"`,
             tagId: ``,
             tagSrc: ``,
-            tagClass: `class="app-text-common"`
+            tagClass: `class="app-text-common app-text-fz${fontSize} app-text-color-${color.split('#')[1]}"`
           }
 
           if (!this.systemParams.hasId) {

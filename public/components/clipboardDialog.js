@@ -3,7 +3,7 @@ let clipboardDialogComponent = {
   data() {
     return {
       dialogFormVisible: false,
-      title: '生成代码'
+      title: '生成代码 - 生成的class，你们懂的(oﾟvﾟ)ノ'
     }
   },
   props: {

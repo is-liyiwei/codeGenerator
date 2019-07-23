@@ -35,12 +35,12 @@
           v-model="filterKey"
           class="ipt"
           autocomplete="off"
-          placeholder="过滤关键字"
+          placeholder="查找关键字含有文件名"
         ></el-input>
         <el-button type="primary" @click="setFilterKeyAndReload">获取数据</el-button>
         <el-button type="primary" @click="setDialogStatus('settingDialog', true)">系统设置</el-button>
         <el-button type="primary" @click="setDialogStatus('statisticalDialog', true)">数量统计</el-button>
-        <el-button type="primary" @click="toPage('text')">toTextPage</el-button>
+        <el-button type="primary" @click="toPage('text')">文本代码生成页面</el-button>
       </div>
       <!-- 表格 -->
       <el-table :data="currImageData" :height="tableHeigth" border style="width: 100%">
@@ -161,9 +161,14 @@
         if (window.localStorage.systemParams) {
           this.systemParams = JSON.parse(window.localStorage.systemParams)
         }
-        this.filterKey = window.localStorage.filterKey || '@2x'
+        this.filterKey = window.localStorage.filterKey || ''
         this.getData()
       },
+      // watch: {
+      //   filterKey (newVal) {
+      //     window.localStorage.filterKey = newVal
+      //   }
+      // },
       methods: {
         // 获取所有图片原始宽高，这个在图片自身的load事件触发
         imgLoaded (fileName, e) {

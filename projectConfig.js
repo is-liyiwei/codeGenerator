@@ -1,6 +1,8 @@
 module.exports = {
-  // 文件路径
-  filesPath: 'G:/work-demo/lacrosse/src/assets',
+  // 图片的文件路径
+  filesPath: 'G:/codeGenerator/mockData/images',
+  // 文本的文件路径(excel文件)
+  excelPath: 'G:/codeGenerator/mockData/data.csv',
   // 是否自动打开浏览器
   autoOpenBrowser: true,
   // ['localhost', 'autoIp']，不建议修改

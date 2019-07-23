@@ -51,7 +51,7 @@ router.get('/files', function(req, res, next) {
 
 router.get('/getText', function(req, res, next) {
   try {
-    fs.readFile(path.resolve(__dirname, '../data.csv'), function(err, data) {
+    fs.readFile(path.resolve(projectConfig.excelPath), function(err, data) {
       if (err) {
         console.log(err.stack)
         return

@@ -188,7 +188,7 @@ let settingDialogComponent = {
               'el-form-item',
               {
                 props: {
-                  label: '是否添加class选择器，默认值为app-icon-common或app-text-common'
+                  label: '是否添加class选择器'
                 }
               },
               [

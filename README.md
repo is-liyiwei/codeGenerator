@@ -19,8 +19,10 @@ http://localhost:3006/
 ```
 
 module.exports = {
-  // 文件路径
-  filesPath: 'G:/work-demo/electricfront/src/assets/appIcon',
+  // 图片的文件路径
+  filesPath: 'G:\[liyiwei]\codeGenerator\mockData\images',
+  // 文本的文件路径(excel文件)
+  excelPath: 'G:\[liyiwei]\codeGenerator\mockData\data.csv',
   // 是否自动打开浏览器
   autoOpenBrowser: true,
   // ['localhost', 'autoIp']，不建议修改
@@ -34,6 +36,8 @@ module.exports = {
 > # 文本代码生成
 
 ## 参考配置文件 data.csv
+
+数据参考mockData目录的文件即可
 
 > # 项目预览
 
